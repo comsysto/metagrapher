@@ -1,12 +1,9 @@
 package com.comsysto.metagrapher.core.application;
 
-import com.comsysto.metagrapher.core.api.MetagrapherService;
+import com.comsysto.metagrapher.core.service.MetagrapherService;
 import com.comsysto.metagrapher.core.eureka.EurekaMetagrapherClientInfoProvider;
-import com.comsysto.metagrapher.core.impl.MetagrapherClientInfoRepository;
 import com.comsysto.metagrapher.core.impl.MetagrapherUiConfigRepository;
-import com.comsysto.metagrapher.core.impl.RedisMetagrapherClientInfoRepository;
 import com.comsysto.metagrapher.core.impl.RedisMetagrapherUiConfigRepository;
-import com.comsysto.metagrapher.core.job.FetchJob;
 import com.comsysto.metagrapher.core.spi.MetagrapherClientInfoProvider;
 import com.comsysto.metagrapher.core.web.MetagrapherWebController;
 import com.netflix.discovery.EurekaClient;
@@ -56,20 +53,20 @@ public class Application {
         return new RedisMetagrapherUiConfigRepository(redisTemplate(), uiConfigRedisKey);
     }
 
-    @Bean
-    public FetchJob fetchJob(){
-        return new FetchJob(clientInfoRepository(), eurekaClientInfoProvider());
-    }
+//    @Bean
+//    public FetchJob fetchJob(){
+//        return new FetchJob(clientInfoRepository(), eurekaClientInfoProvider());
+//    }
 
     @Bean
     public MetagrapherClientInfoProvider eurekaClientInfoProvider() {
         return new EurekaMetagrapherClientInfoProvider(eurekaClient, "default");
     }
 
-    @Bean
-    public MetagrapherClientInfoRepository clientInfoRepository() {
-        return new RedisMetagrapherClientInfoRepository(redisTemplate(), clientInfoRedisKey);
-    }
+//    @Bean
+//    public MetagrapherClientInfoRepository clientInfoRepository() {
+//        return new RedisMetagrapherClientInfoRepository(redisTemplate(), clientInfoRedisKey);
+//    }
 
 
     @Bean
@@ -113,7 +110,7 @@ public class Application {
 
     @Bean
     public MetagrapherService metagrapherService(){
-        return new MetagrapherService(clientInfoRepository());
+        return new MetagrapherService(eurekaClientInfoProvider());
     }
 
 }

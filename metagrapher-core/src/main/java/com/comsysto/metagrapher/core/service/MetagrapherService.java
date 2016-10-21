@@ -1,5 +1,6 @@
-package com.comsysto.metagrapher.core.api;
+package com.comsysto.metagrapher.core.service;
 
+import com.comsysto.metagrapher.core.api.*;
 import com.comsysto.metagrapher.core.spi.MetagrapherClientInfoProvider;
 import com.comsysto.metagrapher.core.spi.MetagrapherClientInfo;
 import com.google.common.collect.Sets;
@@ -10,13 +11,13 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
 
 @AllArgsConstructor
 @Slf4j
 public class MetagrapherService {
 
+    public static final String POOL = "metagrapher.pool";
     public static final String IMPORT_PREFIX = "metagrapher.import.";
     public static final String EXPORT_PREFIX = "metagrapher.export.";
     public static final String JENKINS_LINK = "metagrapher.app.links.jenkins";
@@ -36,23 +37,36 @@ public class MetagrapherService {
 
     private Optional<Application> mapClientInfo(Map.Entry<String, Set<MetagrapherClientInfo>> entry) {
         Collection<MetagrapherClientInfo> infoList = entry.getValue();
-        Map<String, String> consolidatedProps = mapProperties(infoList, "");
 
         return Optional.of(
                 new Application(
                         entry.getKey(),
                         entry.getKey(),
-                        mapInstances(infoList),
-                        consolidatedProps,
+                        mapPools(infoList),
                         createImports(infoList),
-                        createExports(infoList),
-                        createApplicationLinks(consolidatedProps)
+                        createExports(infoList)
                 )
         );
     }
 
-    private ApplicationLinks createApplicationLinks(Map<String, String> consolidatedProps) {
-        return new ApplicationLinks(
+    private SortedSet<Pool> mapPools(Collection<MetagrapherClientInfo> infoList) {
+        Map<String, List<MetagrapherClientInfo>> infosByPool = infoList.stream()
+                .collect(groupingBy(this::getPoolName));
+
+        Map<String, String> consolidatedProps = mapProperties(infoList, "");
+
+        return infosByPool.entrySet().stream()
+                .map(e -> new Pool(e.getKey(), mapInstances(e.getValue()), createApplicationLinks(consolidatedProps)))
+                .collect(toCollection(TreeSet::new));
+    }
+
+    private String getPoolName(MetagrapherClientInfo info) {
+        String poolName = info.getMetadata().get(POOL);
+        return poolName == null ? "<default>" : poolName;
+    }
+
+    private ArtifactLinks createApplicationLinks(Map<String, String> consolidatedProps) {
+        return new ArtifactLinks(
                 consolidatedProps.get(JENKINS_LINK),
                 consolidatedProps.get(STASH_LINK),
                 consolidatedProps.get(HOME_PAGE_LINK)
@@ -62,7 +76,8 @@ public class MetagrapherService {
     private Map<String, String> mapProperties(Collection<MetagrapherClientInfo> infoList, String prefix) {
         return getConsolidatedPropertiesWithPrefix(infoList, prefix).entrySet()
                 .stream()
-                .filter(e -> !(e.getKey().startsWith(IMPORT_PREFIX) || e.getKey().startsWith(JENKINS_LINK)))
+                //TODO use contains ...
+                .filter(e -> !(e.getKey().startsWith(IMPORT_PREFIX) || e.getKey().startsWith(JENKINS_LINK) || e.getKey().startsWith(EXPORT_PREFIX) || e.getKey().startsWith(POOL)  ))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -139,11 +154,14 @@ public class MetagrapherService {
         return map;
     }
 
-    private Set<Instance> mapInstances(Collection<MetagrapherClientInfo> infoList) {
+    private SortedSet<Instance> mapInstances(Collection<MetagrapherClientInfo> infoList) {
         return infoList
                 .stream()
-                .map(info -> new Instance(info.getHostName(), info.getPort(), info.getHomePageUrl(), InstanceState.valueOf(info.getState().name())))
-                .collect(Collectors.toSet());
+                .map(info -> {
+                    InstanceState state = InstanceState.valueOf(info.getState().name());
+                    return new Instance(info.getId(), state, info.getHostName(), info.getMetadata(), info.getPort(), info.getHomePageUrl());
+                })
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
 

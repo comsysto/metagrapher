@@ -1,0 +1,38 @@
+
+#control-box {
+    float: left;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+    padding: 15px;
+    min-width: 400px;
+    border: solid lightgray;
+    border-radius: 10px;
+
+    background: rgba(233, 233, 233, 0.7);
+}
+
+.out_of_service {
+    color: darkred;
+}
+
+.up {
+    color: darkgreen;
+}
+
+.down {
+    color: darkblue;
+}
+
+.starting {
+    color: darkgoldenrod;
+}
+
+.unknown {
+    color: darkgray;
+}
+
+.tip > p {
+    font-size: 12px;
+}

@@ -2,6 +2,7 @@ package com.comsysto.metagrapher.core.web;
 
 import com.comsysto.metagrapher.core.api.*;
 import com.comsysto.metagrapher.core.impl.MetagrapherUiConfigRepository;
+import com.comsysto.metagrapher.core.service.MetagrapherService;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.MediaType;
@@ -56,28 +57,44 @@ public class MetagrapherWebController {
 
     private Stream<Element> mapApplication(Application application) {
         return Stream.of(
-                Stream.of(new Element(new ServiceNode(application.getId(), application.getName(), new ArrayList<>(application.getInstances()), application.getLinks(), application.getProperties()), createApplicationClasses(application))),
+                Stream.of(new Element(new ServiceNode(application.getId(), application.getName()), createApplicationClasses(application))),
                 mapExports(application),
                 mapExportEdges(application),
                 mapExportImportEdges(application),
-                mapServiceState(application)
+                mapPools(application.getName(), application.getPools())
         ).flatMap(Function.identity());
     }
 
-    private Stream<Element> mapServiceState(Application application) {
-        Map<InstanceState, Long> stateCounts = application.getInstances()
+    private Stream<Element> mapPools(String applicationId, SortedSet<Pool> pools) {
+        return pools.stream()
+                .flatMap(pool -> mapPool(applicationId, pool));
+    }
+
+    private Stream<? extends Element> mapPool(String applicationId, Pool pool) {
+        String poolId = applicationId + ":" + pool.getName();
+
+        Stream<Element> poolStream = Stream.of(
+                new Element(new PoolNode(poolId, pool.getName(), new ArrayList<>(pool.getInstances()), pool.getLinks()), "pool"),
+                new Element(new Edge(applicationId, poolId, Collections.emptySet()), "service-pool-edge")
+        );
+
+        return Stream.concat(poolStream, mapServiceState(poolId, pool));
+    }
+
+    private Stream<Element> mapServiceState(String poolId, Pool pool) {
+        Map<InstanceState, Long> stateCounts = pool.getInstances()
                 .stream()
                 .map(Instance::getState)
                 .collect(groupingBy(Function.identity(), Collectors.counting()));
 
         return Stream.of(InstanceState.values()).flatMap(state -> {
-            String stateId = application.getId() + ":" + state.name();
+            String stateId = poolId + ":" + state.name();
             int count = stateCounts.getOrDefault(state, 0L).intValue();
             return count == 0
                     ? Stream.empty()
                     : Stream.of(
                     new Element(new StateNode(stateId, count, state.ordinal()), "state " + state.name().toLowerCase()),
-                    new Element(new Edge(application.getId(), stateId, Collections.emptySet()), "state-edge")
+                    new Element(new Edge(poolId, stateId, Collections.emptySet()), "state-edge")
             );
         });
     }
@@ -104,14 +121,14 @@ public class MetagrapherWebController {
 
 
     private String createApplicationClasses(Application application) {
-        String stateClass = application.getInstances()
-                .stream()
-                .map(Instance::getState)
-                .max(Comparator.naturalOrder())
-                .get()
-                .name()
-                .toLowerCase();
-        return "service " + stateClass;
+//        String stateClass = application.getInstances()
+//                .stream()
+//                .map(Instance::getState)
+//                .max(Comparator.naturalOrder())
+//                .get()
+//                .name()
+//                .toLowerCase();
+        return "service";
     }
 
 
@@ -182,9 +199,6 @@ public class MetagrapherWebController {
 
         private final String id;
         private final String name;
-        private final List<Instance> instances;
-        private final ApplicationLinks appLinks;
-        private final Map<String, String> properties;
 
     }
 
@@ -215,6 +229,22 @@ public class MetagrapherWebController {
         private final int count;
         private final int order;
     }
+
+    @Value
+    public static class PoolNode implements ElementData {
+        private final String group = "nodes";
+
+        protected final boolean selected = false;
+        protected final boolean selectable = false;
+        protected final boolean locked = false;
+        protected final boolean grabbable = false;
+
+        private final String id;
+        private final String name;
+        private final List<Instance> instances;
+        private final ArtifactLinks links;
+    }
+
 
 
     @Value

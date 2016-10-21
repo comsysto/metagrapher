@@ -6,12 +6,34 @@
     $(function () {
         config = JSON.parse($('script#config').text());
 
-        $.getJSON(config.graphUrl).then(function (data) {
-            createGraph(data.elements);
+
+        var dataPromise = $.getJSON(config.graphUrl);
+        var cssPromise = $.ajax({
+            url: $('#graph-styles').attr('href'),
+            dataType: "text"
+        });
+
+        Promise.all([cssPromise, dataPromise]).then(function (results) {
+            initGraphCss(results[0]);
+            initGraph(results[1].elements);
+        });
+
+        function initGraphCss(css) {
+            console.log('init css');
+            $('#graph-styles').replaceWith(
+                $('<css id="graph-styles" rel="graph-styles">').text(css)
+            );
+            console.log('init css ... done');
+        }
+
+        function initGraph(elements) {
+            console.log('init graph');
+            createGraph(elements);
             rearrangeNodes();
             loadPositions();
             updateControlBox();
-        });
+            console.log('init graph ... done');
+        }
 
 
         $('#store-layout-link').click(function () {
@@ -36,7 +58,7 @@
         });
     });
 
-    function rearrangeNodes(){
+    function rearrangeNodes() {
         cy.makeLayout({name: 'grid'}).run();
     }
 
@@ -51,7 +73,7 @@
         });
     }
 
-    function updateControlBox(){
+    function updateControlBox() {
         updateInstances();
         updateProperties();
         updateAppLinks();
@@ -72,9 +94,9 @@
             panelElement.hide();
         }
 
-        function setupLink(selector, link){
+        function setupLink(selector, link) {
             var linkElement = element.find(selector);
-            if(link){
+            if (link) {
                 linkElement.attr('href', link);
                 linkElement.parent().removeAttr('style');
             } else {
@@ -158,17 +180,33 @@
         );
 
         cy.nodes('.service').on('position', function (e) {
+            var serviceElementHeight = 100;
+            var poolElementHeight = 32;
             var serviceElement = e.cyTarget;
             var p = serviceElement.position();
-            var h = serviceElement.boundingBox().h;
-            var stateElements = serviceElement.neighborhood('node.state').sort(function (e1, e2) {
+            var poolElements = serviceElement.neighborhood('node.pool').sort(function (e1, e2) {
+                return e1.data('name').localeCompare(e2.data('name'));
+            });
+
+            poolElements.forEach(function (element, i) {
+                element.position({
+                    x: p.x,
+                    y: p.y + serviceElementHeight / 2 + (poolElementHeight * i) + poolElementHeight / 2
+                })
+            })
+        });
+
+        cy.nodes('.pool').on('position', function (e) {
+            var poolElement = e.cyTarget;
+            var p = poolElement.position();
+            var stateElements = poolElement.neighborhood('node.state').sort(function (e1, e2) {
                 return e1.data('order') - e2.data('order');
             });
 
             stateElements.forEach(function (element, i) {
                 element.position({
-                    x: p.x + (16 * i) - (stateElements.length / 2 * 16) + 8,
-                    y: p.y + h / 4
+                    x: p.x + (12 * i) - (stateElements.length / 2 * 12) + 6,
+                    y: p.y + 6
                 })
             })
         });

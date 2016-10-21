@@ -1,0 +1,129 @@
+node {
+    content: data(name);
+    border-color: grey;
+}
+
+node.state {
+    shape: ellipse;
+    border-width: 1px;
+    width: 10px;
+    height: 10px;
+    content: data(count);
+    text-valign: center;
+    text-halign: center;
+    font-size: 8px;
+    font-weight: bold;
+    color: whitesmoke;
+}
+
+/*node.down {*/
+    /*background-color: lightskyblue;*/
+/*}*/
+
+/*node.starting {*/
+    /*background-color: darkgoldenrod;*/
+/*}*/
+
+/*node.unknown {*/
+    /*background-color: grey;*/
+/*}*/
+
+/*node.out_of_service {*/
+    /*background-color: red;*/
+/*}*/
+
+/*node.up {*/
+    /*background-color: greenyellow;*/
+/*}*/
+
+node.state.down {
+    background-color: darkblue;
+}
+
+node.state.starting {
+    background-color: darkgoldenrod;
+}
+
+node.state.unknown {
+    background-color: darkgray;
+}
+
+node.state.out_of_service {
+    background-color: darkred;
+}
+
+node.state.up {
+    background-color: darkgreen;
+}
+
+
+edge.import-export-edge {
+    target-arrow-shape: triangle;
+    content: data(name);
+    line-style: dashed;
+    curve-style: unbundled-bezier;
+    width: 3;
+}
+
+edge.service-export-edge {
+    width: 5;
+}
+
+node.external-system {
+    shape: triangle;
+    border-width: 3px;
+    background-color: lightgray;
+    font-weight: bold;
+    /*color:darkgray;*/
+    text-valign: center;
+    text-outline-color: lightgrey;
+    text-outline-opacity: 1;
+    text-outline-width: 1px;
+    width: 50px;
+    height: 50px;
+}
+
+node.service {
+    shape: roundrectangle;
+    border-width: 3px;
+    font-weight: bold;
+    /*color:darkgray;*/
+    text-valign: center;
+    text-outline-color: lightgrey;
+    text-outline-opacity: 1;
+    text-outline-width: 1px;
+    width: 100px;
+    height: 100px;
+    background-color: #2aabd2;
+}
+
+node.pool {
+    shape: roundrectangle;
+    border-width: 1px;
+    color:black;
+    text-valign: bottom;
+    text-halign: center;
+    /*text-margin-x: -98px;*/
+    text-margin-y: -28px;
+    font-size: 10px;
+    width: 100px;
+    height: 30px;
+    background-color: lightgrey;
+}
+
+
+node:selected {
+    overlay-color: lightblue;
+    overlay-opacity: 0.5;
+}
+
+node.export {
+    shape: ellipse;
+    color: darkgray;
+    border-width: 3px;
+    background-color: lightgray;
+    border-width: 3px;
+    font-size: 10px;
+    width: 30px;
+    height: 30px;
+}
