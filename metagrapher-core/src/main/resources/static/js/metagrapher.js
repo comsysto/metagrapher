@@ -83,8 +83,8 @@
     function updateAppLinks() {
         var element = $('#app-links');
         var panelElement = $('#app-links-panel');
-        if (node && node.is('.service')) {
-            var appLinks = node.data('appLinks');
+        if (node && node.is('.pool')) {
+            var appLinks = node.data('links');
             setupLink(".jenkins-link", appLinks.jenkinsLink);
             setupLink(".stash-link", appLinks.stashLink);
             setupLink(".homepage-link", appLinks.homePageLink);
@@ -114,7 +114,7 @@
 
         instancesElement.children().not('.template').remove();
 
-        if (node && node.is('.service')) {
+        if (node && node.is('.pool')) {
             var instances = node.data('instances');
             instances.forEach(function (instance) {
 
@@ -145,7 +145,7 @@
 
         element.children().remove();
 
-        if (node && node.is('.service')) {
+        if (node && node.is('.instance')) {
             var properties = node.data('properties');
             var dlElement = $('<dl>').addClass('dl-horizontal');
             Object.keys(properties).forEach(function (name) {
@@ -220,6 +220,7 @@
             node = null;
             updateControlBox();
         });
+
 
     }
 

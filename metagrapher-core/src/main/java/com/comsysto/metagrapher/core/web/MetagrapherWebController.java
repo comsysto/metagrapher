@@ -235,7 +235,7 @@ public class MetagrapherWebController {
         private final String group = "nodes";
 
         protected final boolean selected = false;
-        protected final boolean selectable = false;
+        protected final boolean selectable = true;
         protected final boolean locked = false;
         protected final boolean grabbable = false;
 
