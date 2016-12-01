@@ -95,6 +95,17 @@
 
 <div id="cy" style="width: 100%; height: 100%;"></div>
 
+<script src="system.js"></script>
+<script>
+    // set our baseURL reference path
+    SystemJS.config({
+        baseURL: '/js'
+    });
+
+    // loads /js/main.js
+    SystemJS.import('main.js');
+</script>
+
 <script src="${applicationBasePath}/libs/jquery.js"></script>
 <script src="${applicationBasePath}/libs/bootstrap-3.3.4-dist/js/bootstrap.js"></script>
 <script src="${applicationBasePath}/libs/jquery.qtip.js"></script>
