@@ -19,6 +19,9 @@ import {PanelComponent} from "./components/generic/panel.component";
 import {ListPanelComponent} from "./components/generic/list-panel.component";
 import {ListPanelItemComponent} from "./components/generic/list-panel-item.component";
 
+const cytoscape = require("cytoscape");
+
+console.log(cytoscape);
 
 @NgModule({
     imports: [BrowserModule],
@@ -34,6 +37,8 @@ import {ListPanelItemComponent} from "./components/generic/list-panel-item.compo
 })
 class AppModule {
 }
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
     platformBrowserDynamic()
