@@ -147,8 +147,16 @@ public class MetagrapherWebController {
 
 
     @RequestMapping("/metagrapher")
-    public ModelAndView internalIndexHtml(HttpServletRequest request) throws IOException {
+    public ModelAndView metagrapherHtml(HttpServletRequest request) throws IOException {
         ModelAndView modelAndView = new ModelAndView("metagrapher");
+        // This variable is used to build the abstract resource urls, this can be done in a more sophisticated way ...
+        modelAndView.addObject("applicationBasePath", request.getContextPath());
+        return modelAndView;
+    }
+
+    @RequestMapping("/metagrapher_ng")
+    public ModelAndView metagrapherNgHtml(HttpServletRequest request) throws IOException {
+        ModelAndView modelAndView = new ModelAndView("metagrapher_ng");
         // This variable is used to build the abstract resource urls, this can be done in a more sophisticated way ...
         modelAndView.addObject("applicationBasePath", request.getContextPath());
         return modelAndView;

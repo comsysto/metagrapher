@@ -1,12 +1,9 @@
-// app.component.ts
 import {Component} from '@angular/core';
 
 @Component({
-    selector: 'my-app',
+    selector: 'app',
     template: `
-    <div>
-      Hello world!
-    </div>
-  `
+    <control-box></control-box>
+`
 })
 export class AppComponent {}

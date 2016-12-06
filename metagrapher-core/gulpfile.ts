@@ -6,6 +6,7 @@ import * as gulpUtil from "gulp-util";
 import * as uglify from "gulp-uglify";
 import * as  sourcemaps from "gulp-sourcemaps";
 import * as  buffer from "vinyl-buffer";
+import * as babelify from "babelify";
 
 var tsify: any = require("tsify");
 
@@ -24,6 +25,7 @@ function browerifyInit() {
         debug: true,
         entries: [config.mainPath],
         cache: {},
+        extensions: ['.js', '.json', '.ts'],
         packageCache: {}
     })
 
@@ -40,17 +42,32 @@ function bundle(browserifyLike: any) {
         .pipe(source(config.distFile))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(uglify())
+        // .pipe(uglify())
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(config.distDir));
 }
 
 function configureTsify(browserifyLike: any) {
-    return browserifyLike.plugin(tsify, {
-        module: "commonjs",
-        target: "es5",
-        path: "tsconfig.json"
-    })
+    return browserifyLike
+        .plugin(tsify, {
+            module: "commonjs",
+            target: "es6",
+            path: "tsconfig.json",
+            extensions: ['.ts']
+        }).transform(babelify, {
+            global: true,
+            ignore: /\/node_modules\/(?!@angular\/)/,
+            presets: [
+                "es2015"
+                ],
+            plugins: [
+                "angular2-annotations",
+                "transform-decorators-legacy",
+                "transform-class-properties",
+                "transform-flow-strip-types"
+            ],
+            extensions: ['.js', '.json', '.ts']
+        });
 }
 
 gulp.task("build:bundle", () => {
