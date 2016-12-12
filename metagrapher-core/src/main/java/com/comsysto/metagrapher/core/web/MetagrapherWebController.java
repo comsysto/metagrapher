@@ -1,6 +1,7 @@
 package com.comsysto.metagrapher.core.web;
 
 import com.comsysto.metagrapher.core.api.*;
+import com.comsysto.metagrapher.core.impl.GraphConfig;
 import com.comsysto.metagrapher.core.impl.MetagrapherUiConfigRepository;
 import com.comsysto.metagrapher.core.service.MetagrapherService;
 import lombok.RequiredArgsConstructor;
@@ -164,14 +165,14 @@ public class MetagrapherWebController {
 
     @RequestMapping(value = "/metagrapher/config", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void postPosition(@RequestBody Map<String, Object> config) {
+    public void postPosition(@RequestBody GraphConfig config) {
         repository.storeUiConfig(config);
     }
 
     @RequestMapping(value = "/metagrapher/config", method = RequestMethod.GET)
     @ResponseBody
-    public Map<String, Object> getPosition() {
-        return repository.loadUiConfig().orElse(Collections.emptyMap());
+    public GraphConfig getPosition() {
+        return repository.loadUiConfig().orElse(new GraphConfig(Collections.emptyMap()));
     }
 
     @Value

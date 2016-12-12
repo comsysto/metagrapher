@@ -1,5 +1,18 @@
+html{
+    width: 100%;
+    height: 100%;
+    /*min-width: 100%;*/
+    /*min-height: 100%;*/
+}
+.graph-container{
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    display: block;
+}
 
-#control-box {
+.control-box {
     float: left;
     position: absolute;
     top: 10px;

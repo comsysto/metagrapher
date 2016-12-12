@@ -7,7 +7,7 @@
         config = JSON.parse($('script#config').text());
 
 
-        var dataPromise = $.getJSON(config.graphUrl);
+        var dataPromise = $.getJSON(config.graphRestUrl);
         var cssPromise = $.ajax({
             url: $('#graph-styles').attr('href'),
             dataType: "text"
@@ -38,7 +38,7 @@
 
         $('#store-layout-link').click(function () {
             $.ajax({
-                url: config.configUrl,
+                url: config.configRestUrl,
                 method: 'POST',
                 dataType: 'json',
                 data: JSON.stringify(cy.nodes().toArray().reduce(function (map, node) {
@@ -63,7 +63,7 @@
     }
 
     function loadPositions() {
-        $.getJSON(config.configUrl).then(function (data) {
+        $.getJSON(config.configRestUrl).then(function (data) {
             cy.nodes().forEach(function (n) {
                 var nodeData = data[n.id()];
                 if (nodeData) {
@@ -102,9 +102,7 @@
             } else {
                 linkElement.parent().hide();
             }
-
         }
-
     }
 
 

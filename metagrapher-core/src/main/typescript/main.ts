@@ -2,9 +2,8 @@
 
 import * as $ from "jquery";
 (<any>global)['jQuery'] = $;
+
 import "bootstrap";
-
-
 import "es6-shim";
 import "zone.js";
 import "reflect-metadata";
@@ -18,26 +17,35 @@ import {InstanceListGroupComponent} from "./components/domain/instance-group.com
 import {PanelComponent} from "./components/generic/panel.component";
 import {ListPanelComponent} from "./components/generic/list-panel.component";
 import {ListPanelItemComponent} from "./components/generic/list-panel-item.component";
+import {GraphComponent} from "./components/domain/graph.component";
+import {GraphDataService} from "./services/GraphDataService";
+import {HttpModule} from "@angular/http";
+import {ButtonComponent} from "./components/generic/link-button.component";
+import {GraphConfigPanel} from "./components/domain/graph-config-panel.component";
 
 const cytoscape = require("cytoscape");
 
-console.log(cytoscape);
 
 @NgModule({
-    imports: [BrowserModule],
+    imports: [ BrowserModule, HttpModule],
     declarations: [
         AppComponent,
+        ButtonComponent,
         ControlBoxComponent,
         InstanceListGroupComponent,
+        GraphConfigPanel,
         PanelComponent,
         ListPanelComponent,
-        ListPanelItemComponent
+        ListPanelItemComponent,
+        GraphComponent,
+    ],
+    providers: [
+        GraphDataService
     ],
     bootstrap: [AppComponent]
 })
 class AppModule {
 }
-
 
 
 document.addEventListener('DOMContentLoaded', function () {

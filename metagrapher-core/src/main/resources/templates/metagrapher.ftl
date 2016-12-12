@@ -18,6 +18,7 @@
     <script id="config" type="application/json">
         {
             "graphUrl":  "${applicationBasePath}/metagrapher/graph.json",
+
             "configUrl": "${applicationBasePath}/metagrapher/config"
         }
     </script>
