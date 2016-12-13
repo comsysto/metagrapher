@@ -4,6 +4,12 @@ html{
     /*min-width: 100%;*/
     /*min-height: 100%;*/
 }
+
+.panel-heading{
+    cursor: pointer;
+    font-weight: bold;
+}
+
 .graph-container{
     width: 100%;
     height: 100%;

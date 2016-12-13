@@ -3,6 +3,8 @@ import {Injectable} from "@angular/core";
 import {Http, Response} from "@angular/http";
 import {Observable, Subject, ReplaySubject} from "rxjs";
 import {IGraphConfig} from "../data/IGraphConfig";
+import {IPool} from "../data/IPool";
+import {IInstance} from "../data/IInstance";
 
 @Injectable()
 export class GraphDataService {
@@ -21,6 +23,10 @@ export class GraphDataService {
 
     private _configProvider: () => IGraphConfig = () => null;
 
+    private _selectedNode: Subject<INode> = new ReplaySubject(1);
+
+    private _selectedInstance: Subject<IInstance> = new ReplaySubject(1);
+
 
     constructor(private http: Http) {
         console.log("GraphDataService -- construtor");
@@ -28,7 +34,12 @@ export class GraphDataService {
         this._styles.subscribe(styles => console.log("GraphDataService - styles", {styles}));
         this._config.subscribe(layout => console.log("GraphDataService - config", {layout}));
         this._configUrl.subscribe(configUrl => console.log("GraphDataService - configUrl", {configUrl}));
+        this.selectedNode.subscribe(node => console.log("GraphDataService - selectedNode", {node}));
+        this.selectedPool.subscribe(node => console.log("GraphDataService - selectedPool", {node}));
+        this.selectedInstance.subscribe(instance => console.log("GraphDataService - selectedInstance", {instance}));
+
         this._config.next(null);
+
 
         this._nodesUrl
             .do(url => console.log("GraphDataService -- graphRestUrl", {url}))
@@ -56,6 +67,10 @@ export class GraphDataService {
             .take(1)
             .do(url => console.log("GraphDataService -- load layout", {url}))
             .subscribe(url => this.loadConfigFromUrl(url));
+
+        this.selectedPool
+            .distinctUntilChanged((p1, p2) => p1 == p2 || (p1 && p1.id == p2.id))
+            .subscribe(pool => this.selectInstance(null))
     }
 
 
@@ -132,5 +147,24 @@ export class GraphDataService {
         this._configProvider = configProvider;
     }
 
+    get selectedNode(): Observable<INode> {
+        return this._selectedNode;
+    }
+
+    get selectedPool(): Observable<IPool> {
+        return this._selectedNode.map(node => node.type == 'pool' ? <IPool>node : null);
+    }
+
+    get selectedInstance(): Observable<IInstance> {
+        return this._selectedInstance;
+    }
+
+    selectNode(node: INode){
+        this._selectedNode.next(node);
+    }
+
+    selectInstance(instance: IInstance){
+        this._selectedInstance.next(instance);
+    }
 
 }

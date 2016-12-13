@@ -25,7 +25,7 @@ export class GraphComponent implements AfterViewInit {
     config: Observable<IGraphConfig>;
 
     @Output()
-    onSelectedNode = new EventEmitter();
+    onSelectedNode: EventEmitter<INode> = new EventEmitter();
 
     @Input()
     selectedNode: Observable<INode>;
@@ -36,6 +36,9 @@ export class GraphComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         console.log("GraphComponent ngAfterViewInit subscribe");
+
+        this.onSelectedNode.subscribe((node: INode) => console.log("GraphComponent onSelectedNode", {node}));
+
         Observable.combineLatest(
             this.nodes.do((values) => console.log("GraphComponent nodes", {values})),
             this.styles.do((values) => console.log("GraphComponent styles", {values})),
@@ -71,8 +74,8 @@ export class GraphComponent implements AfterViewInit {
             nodes,
             styles,
             this.containerElement.nativeElement,
-            (node: any) => {
-                this.selectNode(node);
+            (element: any) => {
+                this.selectNode(element.data());
             }
         );
         console.log("GraphComponent created cytoscape");

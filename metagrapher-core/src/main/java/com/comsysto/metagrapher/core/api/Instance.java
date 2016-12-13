@@ -19,6 +19,10 @@ public class Instance implements Comparable<Instance>{
     @NonNull
     Map<String, String> properties;
 
+    @NonNull
+    Map<String, String> links;
+
+
     int port;
 
     String homePage;

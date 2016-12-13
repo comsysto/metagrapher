@@ -11,7 +11,7 @@ export class CytoscapeGraph {
         this.cy = cytoscape({
             container: containerElement,
 
-            ready: function () {
+            ready: ()=> {
             },
 
             style: styles,
@@ -29,16 +29,16 @@ export class CytoscapeGraph {
     }
 
     private fixPoolPositionToElement(): void {
-        this.cy.nodes('.service').on('position', function (e: any) {
+        this.cy.nodes('.service').on('position', (e: any) => {
             var serviceElementHeight = 100;
             var poolElementHeight = 32;
             var serviceElement = e.cyTarget;
             var p = serviceElement.position();
-            var poolElements = serviceElement.neighborhood('node.pool').sort(function (e1: any, e2: any) {
+            var poolElements = serviceElement.neighborhood('node.pool').sort((e1: any, e2: any) => {
                 return e1.data('name').localeCompare(e2.data('name'));
             });
 
-            poolElements.forEach(function (element: any, i: number) {
+            poolElements.forEach((element: any, i: number) => {
                 element.position({
                     x: p.x,
                     y: p.y + serviceElementHeight / 2 + (poolElementHeight * i) + poolElementHeight / 2
@@ -48,14 +48,14 @@ export class CytoscapeGraph {
     }
 
     private fixStatePositionToPool(): void {
-        this.cy.nodes('.pool').on('position', function (e: any) {
+        this.cy.nodes('.pool').on('position', (e: any) => {
             var poolElement = e.cyTarget;
             var p = poolElement.position();
-            var stateElements = poolElement.neighborhood('node.state').sort(function (e1: any, e2: any) {
+            var stateElements = poolElement.neighborhood('node.state').sort((e1: any, e2: any) => {
                 return e1.data('order') - e2.data('order');
             });
 
-            stateElements.forEach(function (element: any, i: number) {
+            stateElements.forEach((element: any, i: number) => {
                 element.position({
                     x: p.x + (12 * i) - (stateElements.length / 2 * 12) + 6,
                     y: p.y + 6
@@ -65,11 +65,11 @@ export class CytoscapeGraph {
     }
 
     private registerSelectionHandler(): void {
-        this.cy.nodes().on('select', function (e: any) {
+        this.cy.nodes().on('select', (e: any)=> {
             this.onSelectedNodeChange(e.cyTarget);
         });
 
-        this.cy.nodes().on('unselect', function (e: any) {
+        this.cy.nodes().on('unselect', (e: any)=> {
             this.onSelectedNodeChange(e.cyTarget);
         });
     }
@@ -95,7 +95,7 @@ export class CytoscapeGraph {
 
     public applyConfig(graphLayout: IGraphConfig): void {
         let nodeLayouts = graphLayout.nodeConfigs;
-        this.cy.nodes().forEach(function (node: any) {
+        this.cy.nodes().forEach((node: any) => {
             let nodeLayout: INodeConfig = nodeLayouts[node.id()];
             if (nodeLayout) {
                 node.position(nodeLayout.position);
@@ -105,13 +105,14 @@ export class CytoscapeGraph {
 
     public getLayout(): IGraphConfig {
         return {
-            nodeConfigs: this.cy.nodes().toArray().reduce(function (map: {[nodeId:string]: INodeConfig}, node: any) {
+            nodeConfigs: this.cy.nodes().toArray().reduce((map: {[nodeId: string]: INodeConfig}, node: any) => {
                 var p = node.position();
                 map[node.id()] = {
                     position: {
                         x: <number>p.x,
                         y: <number>p.y,
-                }};
+                    }
+                };
                 return map;
             }, {})
         };

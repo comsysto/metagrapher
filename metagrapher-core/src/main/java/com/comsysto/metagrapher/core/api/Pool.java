@@ -3,6 +3,7 @@ package com.comsysto.metagrapher.core.api;
 import lombok.NonNull;
 import lombok.Value;
 
+import java.util.Map;
 import java.util.SortedSet;
 
 @Value
@@ -14,7 +15,7 @@ public class Pool implements Comparable<Pool>{
     SortedSet<Instance> instances;
 
     @NonNull
-    ArtifactLinks links;
+    Map<String, String> links;
 
     @Override
     public int compareTo(Pool o) {

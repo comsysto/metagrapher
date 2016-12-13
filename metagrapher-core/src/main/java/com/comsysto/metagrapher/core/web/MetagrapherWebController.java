@@ -208,6 +208,7 @@ public class MetagrapherWebController {
 
         private final String id;
         private final String name;
+        private final String type = "service";
 
     }
 
@@ -223,6 +224,7 @@ public class MetagrapherWebController {
         private final String id;
         private final String name;
         private final Set<String> tags;
+        private final String type = "export";
     }
 
     @Value
@@ -237,6 +239,7 @@ public class MetagrapherWebController {
         private final String id;
         private final int count;
         private final int order;
+        private final String type = "state";
     }
 
     @Value
@@ -251,7 +254,8 @@ public class MetagrapherWebController {
         private final String id;
         private final String name;
         private final List<Instance> instances;
-        private final ArtifactLinks links;
+        private final Map<String, String> links;
+        private final String type = "pool";
     }
 
 

@@ -13,7 +13,7 @@ import {GraphComponent} from "./domain/graph.component";
     selector: 'app',
     template: `
     <control-box></control-box>
-    <graph [nodes]="nodes" [styles]="styles" [config]="config" class="graph-container"></graph>
+    <graph [nodes]="nodes" [styles]="styles" [config]="config" (onSelectedNode)="onSelectedNode($event)" class="graph-container"></graph>
 `
 })
 export class AppComponent implements OnInit, AfterViewInit{
@@ -41,6 +41,11 @@ export class AppComponent implements OnInit, AfterViewInit{
 
     get config(): Observable<IGraphConfig>{
         return this.graphDataService.config;
+    }
+
+    onSelectedNode(node: INode){
+        console.log("AppComponent onSelectedNode");
+        this.graphDataService.selectNode(node);
     }
 
 

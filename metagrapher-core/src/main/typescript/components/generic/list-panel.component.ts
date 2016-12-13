@@ -5,7 +5,7 @@ import * as $ from "jquery";
     selector: 'list-panel',
     template: `
 <div class="panel panel-default">
-     <div  (click)="toggle()" class="panel-heading" style="cursor: pointer">
+     <div  (click)="toggle()" class="panel-heading">
         {{title}}
     </div>
    

@@ -8,6 +8,9 @@ import {Component} from "@angular/core";
     <hr/>
     <div class="panel-group">  
         <graph-config-panel></graph-config-panel>
+        <pool-links-panel></pool-links-panel>
+        <pool-instance-panel></pool-instance-panel>
+        <instance-links-panel></instance-links-panel>
     </div>
 
 </div>

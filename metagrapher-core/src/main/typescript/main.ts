@@ -13,7 +13,6 @@ import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {AppComponent} from "./components/app.component";
 import {ControlBoxComponent} from "./components/domain/control-box.component";
-import {InstanceListGroupComponent} from "./components/domain/instance-group.component";
 import {PanelComponent} from "./components/generic/panel.component";
 import {ListPanelComponent} from "./components/generic/list-panel.component";
 import {ListPanelItemComponent} from "./components/generic/list-panel-item.component";
@@ -22,6 +21,9 @@ import {GraphDataService} from "./services/GraphDataService";
 import {HttpModule} from "@angular/http";
 import {ButtonComponent} from "./components/generic/link-button.component";
 import {GraphConfigPanel} from "./components/domain/graph-config-panel.component";
+import {PoolInstancesPanel} from "./components/domain/pool-instances-panel.component";
+import {PoolLinksPanel} from "./components/domain/pool-links-panel.component";
+import {InstanceLinksPanel} from "./components/domain/instance-links-panel.component";
 
 const cytoscape = require("cytoscape");
 
@@ -32,12 +34,14 @@ const cytoscape = require("cytoscape");
         AppComponent,
         ButtonComponent,
         ControlBoxComponent,
-        InstanceListGroupComponent,
         GraphConfigPanel,
         PanelComponent,
         ListPanelComponent,
         ListPanelItemComponent,
         GraphComponent,
+        PoolInstancesPanel,
+        PoolLinksPanel,
+        InstanceLinksPanel
     ],
     providers: [
         GraphDataService

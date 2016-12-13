@@ -1,8 +1,8 @@
 package com.comsysto.metagrapher.core.service;
 
 import com.comsysto.metagrapher.core.api.*;
-import com.comsysto.metagrapher.core.spi.MetagrapherClientInfoProvider;
 import com.comsysto.metagrapher.core.spi.MetagrapherClientInfo;
+import com.comsysto.metagrapher.core.spi.MetagrapherClientInfoProvider;
 import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +20,8 @@ public class MetagrapherService {
     public static final String POOL = "metagrapher.pool";
     public static final String IMPORT_PREFIX = "metagrapher.import.";
     public static final String EXPORT_PREFIX = "metagrapher.export.";
-    public static final String JENKINS_LINK = "metagrapher.app.links.jenkins";
-    public static final String STASH_LINK = "metagrapher.app.links.stash";
-    public static final String HOME_PAGE_LINK = "metagrapher.app.links.homepage";
+    public static final String APP_LINK_PREFIX = "metagrapher.links.";
+    public static final String INSTANCE_LINK_PREFIX = "metagrapher.instance.links.";
     private final MetagrapherClientInfoProvider clientInfoProvider;
 
 
@@ -56,8 +55,15 @@ public class MetagrapherService {
         Map<String, String> consolidatedProps = mapProperties(infoList, "");
 
         return infosByPool.entrySet().stream()
-                .map(e -> new Pool(e.getKey(), mapInstances(e.getValue()), createApplicationLinks(consolidatedProps)))
+                .map(e -> new Pool(e.getKey(), mapInstances(e.getValue()), filterMap(consolidatedProps, APP_LINK_PREFIX)))
                 .collect(toCollection(TreeSet::new));
+    }
+
+    private Map<String, String> filterMap(Map<String, String> consolidatedProps, String prefix) {
+        return consolidatedProps.entrySet()
+                .stream()
+                .filter(e-> e.getKey().startsWith(prefix))
+                .collect(toMap(e -> e.getKey().substring(prefix.length(), e.getKey().length()), Map.Entry::getValue));
     }
 
     private String getPoolName(MetagrapherClientInfo info) {
@@ -65,19 +71,12 @@ public class MetagrapherService {
         return poolName == null ? "<default>" : poolName;
     }
 
-    private ArtifactLinks createApplicationLinks(Map<String, String> consolidatedProps) {
-        return new ArtifactLinks(
-                consolidatedProps.get(JENKINS_LINK),
-                consolidatedProps.get(STASH_LINK),
-                consolidatedProps.get(HOME_PAGE_LINK)
-        );
-    }
 
     private Map<String, String> mapProperties(Collection<MetagrapherClientInfo> infoList, String prefix) {
         return getConsolidatedPropertiesWithPrefix(infoList, prefix).entrySet()
                 .stream()
                 //TODO use contains ...
-                .filter(e -> !(e.getKey().startsWith(IMPORT_PREFIX) || e.getKey().startsWith(JENKINS_LINK) || e.getKey().startsWith(EXPORT_PREFIX) || e.getKey().startsWith(POOL)  ))
+                .filter(e -> !(e.getKey().startsWith(IMPORT_PREFIX) || e.getKey().startsWith(INSTANCE_LINK_PREFIX) || e.getKey().startsWith(EXPORT_PREFIX) || e.getKey().startsWith(POOL)  ))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -159,7 +158,8 @@ public class MetagrapherService {
                 .stream()
                 .map(info -> {
                     InstanceState state = InstanceState.valueOf(info.getState().name());
-                    return new Instance(info.getId(), state, info.getHostName(), info.getMetadata(), info.getPort(), info.getHomePageUrl());
+                    return new Instance(info.getId(), state, info.getHostName(), info.getMetadata(),
+                            filterMap(info.getMetadata(), INSTANCE_LINK_PREFIX), info.getPort(), info.getHomePageUrl());
                 })
                 .collect(Collectors.toCollection(TreeSet::new));
     }
