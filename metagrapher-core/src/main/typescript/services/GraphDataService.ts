@@ -69,7 +69,7 @@ export class GraphDataService {
             .subscribe(url => this.loadConfigFromUrl(url));
 
         this.selectedPool
-            .distinctUntilChanged((p1, p2) => p1 == p2 || (p1 && p1.id == p2.id))
+            .distinctUntilChanged((p1, p2) => (p1 === p2) || (p1 && p2 && p1.id == p2.id))
             .subscribe(pool => this.selectInstance(null))
     }
 

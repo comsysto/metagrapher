@@ -40,7 +40,13 @@ export class PoolInstancesPanel {
     private selectedInstance: IInstance = null;
 
     isSelected(instance: IInstance){
-        return this.selectedInstance && this.selectedInstance.id == instance.id
+        if(!instance){
+            return false;
+        }
+        if(!this.selectedInstance){
+            return false;
+        }
+        return this.selectedInstance.id === instance.id;
     }
 
     selectInstance(instance: IInstance){
