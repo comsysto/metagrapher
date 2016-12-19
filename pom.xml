@@ -63,6 +63,21 @@
 				<artifactId>spring-boot-admin-server-ui</artifactId>
 				<version>${spring-boot-admin.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.comsysto.metagrapher</groupId>
+				<artifactId>metagrapher-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.comsysto.metagrapher</groupId>
+				<artifactId>metagrapher-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.comsysto.metagrapher</groupId>
+				<artifactId>metagrapher-annotations</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -105,6 +120,9 @@
 
 	<modules>
 		<module>metagrapher-core</module>
+		<module>metagrapher-client</module>
+		<module>metagrapher-annotations</module>
+		<module>metagrapher-ui</module>
 		<module>metagrapher-example</module>
 	</modules>
 
