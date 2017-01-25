@@ -23,6 +23,15 @@
         <spring-boot-admin.version>1.3.2</spring-boot-admin.version>
 	</properties>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -46,9 +55,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-		</plugins>
-	</build>
-
 </project>
