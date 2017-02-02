@@ -14,7 +14,7 @@ services:
   metagrapher:
     ports:
       - "8080:8080"
-    image: "metagrapher/metagrapher-core:latest"
+    image: "metagrapher/metagrapher-ui:latest"
     links:
       - "eureka"
       - "redis"

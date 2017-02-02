@@ -25,7 +25,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import java.nio.charset.StandardCharsets;
 
 @SpringBootApplication
-
 @EnableEurekaClient
 @EnableScheduling
 public class Application {
