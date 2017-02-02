@@ -103,6 +103,7 @@
                 <version>2.5.3</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <tagNameFormat>rel-@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
         </plugins>
