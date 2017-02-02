@@ -138,10 +138,9 @@
 
     <distributionManagement>
         <repository>
-            <id>bintray-okrammer-maven</id>
-            <name>okrammer-maven</name>
-            <url>https://api.bintray.com/maven/okrammer/maven/metagrapher/</url>
-            <!--<url>https://api.bintray.com/maven/okrammer/maven/[PACKAGE_NAME]/;publish=1</url>-->
+            <id>bintray-comsysto-metagrapher</id>
+            <name>comsysto-metagrapher</name>
+            <url>https://api.bintray.com/maven/comsysto/metagrapher/metagrapher/</url>
         </repository>
     </distributionManagement>
 
