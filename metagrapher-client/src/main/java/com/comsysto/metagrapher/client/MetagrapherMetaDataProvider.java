@@ -10,30 +10,22 @@ import com.google.common.collect.Sets;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class MetagrapherPropertySource extends EnumerablePropertySource<Void> implements ApplicationContextAware {
+public class MetagrapherMetaDataProvider implements ApplicationContextAware {
 
-    private static final String EUREKA_INSTANCE_METADATA_MAP_PREFIX = "eureka.instance.metadata-map";
+    private final static String EXPORT_PROPERTY_PREFIX =  MetagrapherConstants.EXPORT_PREFIX;
 
-    private final static String EXPORT_PROPERTY_PREFIX = EUREKA_INSTANCE_METADATA_MAP_PREFIX +
-            "." + MetagrapherConstants.EXPORT_PREFIX;
-
-    private final static String IMPORT_PROPERTY_PREFIX = EUREKA_INSTANCE_METADATA_MAP_PREFIX + "."
-            + MetagrapherConstants.IMPORT_PREFIX;
+    private final static String IMPORT_PROPERTY_PREFIX =  MetagrapherConstants.IMPORT_PREFIX;
 
 
-    private volatile Map<String, String> metagrapherProperties = Collections.emptyMap();
+    private volatile Map<String, String> collectedMetadata = Collections.emptyMap();
     private ApplicationContext applicationContext;
     private List<MetagrapherServiceMetaDataExtractor> extractors = new CopyOnWriteArrayList<>();
-
-    public MetagrapherPropertySource() {
-        super("metagrapher");
-    }
 
     public void addExtractors(MetagrapherServiceMetaDataExtractor extractor) {
         extractors.add(extractor);
@@ -45,12 +37,13 @@ public class MetagrapherPropertySource extends EnumerablePropertySource<Void> im
         Map<String, String> properties = new LinkedHashMap<>();
         for (String beanName : beanNames) {
             Object bean = applicationContext.getBean(beanName);
-            MetagrapherService annotation = bean.getClass().getAnnotation(MetagrapherService.class);
+
+            MetagrapherService annotation = AnnotationUtils.findAnnotation(bean.getClass(), MetagrapherService.class);
             if (annotation != null) {
                 addProperties(properties, bean, annotation);
             }
         }
-        metagrapherProperties = properties;
+        collectedMetadata = Collections.unmodifiableMap(properties);
     }
 
     private void addProperties(Map<String, String> properties, Object bean, MetagrapherService annotation) {
@@ -103,14 +96,7 @@ public class MetagrapherPropertySource extends EnumerablePropertySource<Void> im
         this.applicationContext = applicationContext;
     }
 
-    @Override
-    public String[] getPropertyNames() {
-        return metagrapherProperties.keySet().toArray(new String[0]);
+    public Map<String, String> getCollectedMetaData(){
+        return collectedMetadata;
     }
-
-    @Override
-    public Object getProperty(String name) {
-        return metagrapherProperties.get(name);
-    }
-
 }
